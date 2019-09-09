@@ -35,8 +35,8 @@ public class PlayerShip extends Actor {
         effect.load(Gdx.files.internal("Particles/ShipParticle4.p"), Gdx.files.internal("Particles"));
         effect.getEmitters().first().setPosition(getX(),getY());
         effect.start();
-        setPosition(0, 64);
         setSize(26, 26);
+        setPosition(Gdx.graphics.getWidth() / 2f + getOriginX(), 64);
 
     }
 
@@ -49,17 +49,22 @@ public class PlayerShip extends Actor {
         setPosition(getX() + velocity.x * delta, getY() + velocity.y * delta + .15f * ((float) Math.cos(bouncing)));
 
         for (int i = 0; i < bullets.size(); i++) {
-            bullets.get(i).act(delta);
+            if(bullets.get(i).getY() > Gdx.graphics.getHeight() + 10) {
+                bullets.remove(i);
+                i--;
+            }else
+                bullets.get(i).act(delta);
+
         }
 
-        velocity.scl(.7f);
+        velocity.scl(.8f);
         effect.update(delta);
     }
 
     public void shoot(){
         if(weaponCoolDown < System.currentTimeMillis()){
             weaponCoolDown = System.currentTimeMillis() + shootDelay;
-            bullets.add(new Bullet(new Vector2(getX() + getOriginX(), getY() + getHeight()), new Vector2(0, 300), "Bullets/Bullet1.png"));
+            bullets.add(new Bullet(new Vector2(getX() + getOriginX(), getY() + getHeight()), new Vector2(0, 350), "Bullets/Bullet1.png"));
         }
     }
 
