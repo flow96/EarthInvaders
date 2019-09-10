@@ -1,4 +1,4 @@
-ShipParticle
+BulletParticle
 - Delay -
 active: false
 - Duration - 
@@ -6,12 +6,12 @@ lowMin: -1.0
 lowMax: -1.0
 - Count - 
 min: 0
-max: 200
+max: 100
 - Emission - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 14.0
-highMax: 14.0
+highMin: 70.0
+highMax: 70.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -20,8 +20,8 @@ timeline0: 0.0
 - Life - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 300.0
-highMax: 450.0
+highMin: 72.0
+highMax: 72.0
 relative: false
 scalingCount: 3
 scaling0: 1.0
@@ -62,10 +62,10 @@ scaling0: 1.0
 timelineCount: 1
 timeline0: 0.0
 - X Scale - 
-lowMin: 1.0
-lowMax: 7.0
+lowMin: 2.0
+lowMax: 2.0
 highMin: 2.0
-highMax: 6.0
+highMax: 2.0
 relative: false
 scalingCount: 3
 scaling0: 1.0
@@ -81,8 +81,8 @@ active: false
 active: true
 lowMin: 0.0
 lowMax: 0.0
-highMin: 65.0
-highMax: 120.0
+highMin: 10.0
+highMax: 10.0
 relative: false
 scalingCount: 1
 scaling0: 1.0
@@ -92,8 +92,8 @@ timeline0: 0.0
 active: true
 lowMin: 270.0
 lowMax: 270.0
-highMin: 215.0
-highMax: 325.0
+highMin: 250.0
+highMax: 290.0
 relative: false
 scalingCount: 4
 scaling0: 1.0
@@ -116,9 +116,9 @@ colorsCount: 6
 colors0: 1.0
 colors1: 1.0
 colors2: 1.0
-colors3: 0.9254902
-colors4: 0.0
-colors5: 0.0
+colors3: 1.0
+colors4: 1.0
+colors5: 1.0
 timelineCount: 2
 timeline0: 0.0
 timeline1: 1.0
@@ -131,12 +131,12 @@ relative: false
 scalingCount: 4
 scaling0: 0.0
 scaling1: 1.0
-scaling2: 0.5263158
+scaling2: 0.22807017
 scaling3: 0.0
 timelineCount: 4
 timeline0: 0.0
 timeline1: 0.001
-timeline2: 0.7123288
+timeline2: 0.69863015
 timeline3: 1.0
 - Options - 
 attached: false

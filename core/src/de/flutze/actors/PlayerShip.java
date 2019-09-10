@@ -44,7 +44,7 @@ public class PlayerShip extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
-        float speed = (float) Math.random() * 10;
+        float speed = (float) Math.random() * 15;
         bouncing = (bouncing + delta * speed) % ((float)Math.PI * 4);
         setPosition(getX() + velocity.x * delta, getY() + velocity.y * delta + .15f * ((float) Math.cos(bouncing)));
 

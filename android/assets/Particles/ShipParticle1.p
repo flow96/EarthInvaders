@@ -20,8 +20,8 @@ timeline0: 0.0
 - Life - 
 lowMin: 0.0
 lowMax: 0.0
-highMin: 300.0
-highMax: 450.0
+highMin: 250.0
+highMax: 380.0
 relative: false
 scalingCount: 3
 scaling0: 1.0
@@ -113,9 +113,9 @@ active: false
 active: false
 - Tint - 
 colorsCount: 6
-colors0: 0.91764706
-colors1: 0.0
-colors2: 0.0
+colors0: 1.0
+colors1: 1.0
+colors2: 1.0
 colors3: 0.9254902
 colors4: 0.9254902
 colors5: 0.9254902
@@ -131,12 +131,12 @@ relative: false
 scalingCount: 4
 scaling0: 0.0
 scaling1: 1.0
-scaling2: 0.5263158
+scaling2: 0.3859649
 scaling3: 0.0
 timelineCount: 4
 timeline0: 0.0
 timeline1: 0.001
-timeline2: 0.7123288
+timeline2: 0.7808219
 timeline3: 1.0
 - Options - 
 attached: false
