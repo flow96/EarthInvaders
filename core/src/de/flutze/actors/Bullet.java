@@ -48,6 +48,7 @@ public class Bullet extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        batch.setColor(255, 255, 255, parentAlpha);
         batch.draw(bullet, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
         effect.draw(batch);
     }

@@ -11,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.flutze.utils.Const;
+
 public class PlayerShip extends Actor {
 
     private TextureRegion ship;
@@ -22,7 +24,7 @@ public class PlayerShip extends Actor {
     private float bouncing;
 
 
-    public PlayerShip(String ship){
+    public PlayerShip(String ship) {
         this.ship = new TextureRegion(new Texture(ship));
 
         effect = new ParticleEffect();
@@ -33,11 +35,10 @@ public class PlayerShip extends Actor {
         bouncing = 0;
 
         effect.load(Gdx.files.internal("Particles/ShipParticle4.p"), Gdx.files.internal("Particles"));
-        effect.getEmitters().first().setPosition(getX(),getY());
+        effect.getEmitters().first().setPosition(getX(), getY());
         effect.start();
         setSize(26, 26);
-        setPosition(Gdx.graphics.getWidth() / 2f + getOriginX(), 64);
-
+        setPosition(Gdx.graphics.getWidth() / 2f - getOriginX(), 64);
     }
 
 
@@ -45,14 +46,14 @@ public class PlayerShip extends Actor {
     public void act(float delta) {
         super.act(delta);
         float speed = (float) Math.random() * 15;
-        bouncing = (bouncing + delta * speed) % ((float)Math.PI * 4);
+        bouncing = (bouncing + delta * speed) % ((float) Math.PI * 4);
         setPosition(getX() + velocity.x * delta, getY() + velocity.y * delta + .15f * ((float) Math.cos(bouncing)));
 
         for (int i = 0; i < bullets.size(); i++) {
-            if(bullets.get(i).getY() > Gdx.graphics.getHeight() + 10) {
+            if (bullets.get(i).getY() > Const.HEIGHT + 10) {
                 bullets.remove(i);
                 i--;
-            }else
+            } else
                 bullets.get(i).act(delta);
 
         }
@@ -61,8 +62,8 @@ public class PlayerShip extends Actor {
         effect.update(delta);
     }
 
-    public void shoot(){
-        if(weaponCoolDown < System.currentTimeMillis()){
+    public void shoot() {
+        if (weaponCoolDown < System.currentTimeMillis()) {
             weaponCoolDown = System.currentTimeMillis() + shootDelay;
             bullets.add(new Bullet(new Vector2(getX() + getOriginX(), getY() + getHeight()), new Vector2(0, 350), "Bullets/Bullet1.png"));
         }
@@ -86,20 +87,24 @@ public class PlayerShip extends Actor {
 
     @Override
     public void setPosition(float x, float y) {
+        if(x < 0)
+            x = 0;
+        if(x + getWidth() >= Const.WIDTH)
+            x = Const.WIDTH - getWidth();
         super.setPosition(x, y);
         effect.getEmitters().first().setPosition(x + getOriginX(), y);
     }
 
-    public void moveRight(){
-        //if(velocity.x < 1000000){
+    public void moveRight() {
+        if (getX() + getWidth() < Const.WIDTH) {
             velocity.add(80, 0);
-        //}
+        }
     }
 
-    public void moveLeft(){
-        //if(velocity.x > -1000000){
+    public void moveLeft() {
+        if (getX() > 0) {
             velocity.add(-80, 0);
-        //}
+        }
     }
 
 }

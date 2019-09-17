@@ -1,13 +1,16 @@
 package de.flutze.controls;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 
 public class InputManager implements InputProcessor {
 
+    private boolean rightDown, leftDown, shooting;
+
     private static InputManager instance = new InputManager();
 
-    private InputManager(){
+    private InputManager() {
         Gdx.input.setInputProcessor(this);
     }
 
@@ -18,12 +21,40 @@ public class InputManager implements InputProcessor {
 
     @Override
     public boolean keyDown(int keycode) {
-        return false;
+        switch (keycode) {
+            case Input.Keys.A:
+            case Input.Keys.LEFT:
+                leftDown = true;
+                break;
+            case Input.Keys.D:
+            case Input.Keys.RIGHT:
+                rightDown = true;
+                break;
+            case Input.Keys.SPACE:
+                shooting = true;
+                break;
+        }
+
+
+        return true;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        return false;
+        switch (keycode) {
+            case Input.Keys.A:
+            case Input.Keys.LEFT:
+                leftDown = false;
+                break;
+            case Input.Keys.D:
+            case Input.Keys.RIGHT:
+                rightDown = false;
+                break;
+            case Input.Keys.SPACE:
+                shooting = false;
+                break;
+        }
+        return true;
     }
 
     @Override
@@ -54,5 +85,17 @@ public class InputManager implements InputProcessor {
     @Override
     public boolean scrolled(int amount) {
         return false;
+    }
+
+    public boolean isRightDown() {
+        return rightDown;
+    }
+
+    public boolean isLeftDown() {
+        return leftDown;
+    }
+
+    public boolean isShooting() {
+        return shooting;
     }
 }
