@@ -18,13 +18,13 @@ public class BackgroundStars {
     private final int speed = 50;
 
     public BackgroundStars() {
-        star = new Texture("Particles/particle.png");
+        star = new Texture("Particles/Particle.png");
         stars = new Star[starCount];
         rnd = new Random();
 
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Star(new Vector2(rnd.nextInt(Const.WIDTH + 5), rnd.nextInt(Const.HEIGHT + 10)), rnd.nextInt(2) + 1
-                    , (rnd.nextInt(6) + 1) / 10f + 0.2f, rnd.nextInt(600) + 300);
+                    , (rnd.nextInt(6) + 1) / 10f + 0.2f, rnd.nextInt(600) + 400);
         }
     }
 

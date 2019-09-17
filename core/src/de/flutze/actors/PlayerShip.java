@@ -38,7 +38,7 @@ public class PlayerShip extends Actor {
         effect.getEmitters().first().setPosition(getX(), getY());
         effect.start();
         setSize(26, 26);
-        setPosition(Gdx.graphics.getWidth() / 2f - getOriginX(), 64);
+        setPosition(Const.WIDTH / 2f - getOriginX(), 64);
     }
 
 
