@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.flutze.utils.Const;
+import de.flutze.utils.OffsetGenerator;
 
 public class PlayerShip extends Actor {
 
@@ -21,7 +22,7 @@ public class PlayerShip extends Actor {
     private long weaponCoolDown;
     private int shootDelay;
     private ParticleEffect effect;
-    private float bouncing;
+    private OffsetGenerator offsetGenerator;
 
 
     public PlayerShip(String ship) {
@@ -32,22 +33,20 @@ public class PlayerShip extends Actor {
         bullets = new ArrayList<Bullet>();
         shootDelay = 100;
         weaponCoolDown = 0;
-        bouncing = 0;
+        offsetGenerator = new OffsetGenerator(15);
 
         effect.load(Gdx.files.internal("Particles/ShipParticle4.p"), Gdx.files.internal("Particles"));
         effect.getEmitters().first().setPosition(getX(), getY());
         effect.start();
         setSize(26, 26);
-        setPosition(Const.WIDTH / 2f - getOriginX(), 64);
+        setPosition(Const.WIDTH / 2f - getOriginX(), 70);
     }
 
 
     @Override
     public void act(float delta) {
         super.act(delta);
-        float speed = (float) Math.random() * 15;
-        bouncing = (bouncing + delta * speed) % ((float) Math.PI * 4);
-        setPosition(getX() + velocity.x * delta, getY() + velocity.y * delta + .15f * ((float) Math.cos(bouncing)));
+        setPosition(getX() + velocity.x * delta, getY() + velocity.y * delta + .15f * offsetGenerator.getNext(delta));
 
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets.get(i).getY() > Const.HEIGHT + 10) {

@@ -4,6 +4,7 @@ package de.flutze.actors;
 import com.badlogic.gdx.graphics.g2d.Batch;
 
 import de.flutze.controls.InputManager;
+import de.flutze.utils.OffsetGenerator;
 
 
 public class Player {

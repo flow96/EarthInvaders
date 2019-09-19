@@ -31,11 +31,11 @@ public class BackgroundStars {
 
     public void update(float delta) {
         for (int i = 0; i < stars.length; i++) {
-            stars[i].live--;
-
-            if(stars[i].live < 20){
-                stars[i].alpha -= .05f;
-            }
+//            stars[i].live--;
+//
+//            if(stars[i].live < 20){
+//                stars[i].alpha -= .05f;
+//            }
 
 
             if (stars[i].position.y <= -10 || stars[i].live <= 0) {

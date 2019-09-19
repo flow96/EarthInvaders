@@ -6,14 +6,18 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+import org.omg.CORBA.CODESET_INCOMPATIBLE;
 
 import de.flutze.actors.BackgroundStars;
 import de.flutze.actors.Player;
 import de.flutze.hud.ClassicGameHud;
 import de.flutze.utils.Const;
+import de.flutze.utils.OffsetGenerator;
 
 public class ClassicGameScreen implements Screen {
 
@@ -26,15 +30,23 @@ public class ClassicGameScreen implements Screen {
     private ClassicGameHud gameHud;
     private BackgroundStars backgroundStars;
 
+    private Texture earthTexture;
+
+    private OffsetGenerator offsetGenerator;
+
 
     public ClassicGameScreen(Batch batch){
         this.batch = batch;
+        offsetGenerator = new OffsetGenerator(2);
         player = new Player();
         camera = new OrthographicCamera();
         viewport = new FitViewport(Const.WIDTH, Const.HEIGHT, camera);
 
         gameHud = new ClassicGameHud(batch);
         backgroundStars = new BackgroundStars();
+
+        earthTexture = new Texture("Earth/Earth1.png");
+
     }
 
 
@@ -47,6 +59,10 @@ public class ClassicGameScreen implements Screen {
     private void update(float delta){
         player.update(delta);
         backgroundStars.update(delta);
+
+
+        viewport.getCamera().translate(0, .05f * offsetGenerator.getNext(delta), 0);
+        viewport.getCamera().update();
     }
 
     @Override
@@ -62,6 +78,7 @@ public class ClassicGameScreen implements Screen {
         // Start drawing
         batch.begin();
         backgroundStars.render(batch);
+        batch.draw(earthTexture, -200, -8, Const.WIDTH + 350, 300);
         player.render(batch);
         batch.end();
 

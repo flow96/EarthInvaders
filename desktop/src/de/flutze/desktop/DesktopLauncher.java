@@ -8,8 +8,8 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "Earth Invaders";
-		config.width = 800;
-		config.height = 640;
+		config.width = 896;
+		config.height = 504;
 		new LwjglApplication(new TheGame(), config);
 	}
 }
