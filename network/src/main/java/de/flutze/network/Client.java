@@ -32,7 +32,7 @@ public class Client implements Runnable {
             System.out.print("Message: ");
             inp = scanner.nextLine();
             try {
-                DatagramPacket packet = new DatagramPacket(inp.getBytes(), inp.getBytes().length, InetAddress.getLocalHost(), 1234);
+                DatagramPacket packet = new DatagramPacket(inp.getBytes(), inp.getBytes().length, InetAddress.getLocalHost(), 3031);
                 socket.send(packet);
                 System.out.println("Message sent\r\n");
             } catch (UnknownHostException e) {

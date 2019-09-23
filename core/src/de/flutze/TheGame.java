@@ -3,7 +3,7 @@ package de.flutze;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import de.flutze.screens.ClassicGameScreen;
+import de.flutze.screens.MainMenuScreen;
 
 public class TheGame extends Game {
 	SpriteBatch batch;
@@ -11,7 +11,7 @@ public class TheGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		setScreen(new ClassicGameScreen(batch));
+		setScreen(new MainMenuScreen(this, batch));
 	}
 
 	@Override

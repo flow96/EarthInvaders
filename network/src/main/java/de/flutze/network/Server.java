@@ -17,7 +17,7 @@ public class Server implements Runnable {
 
     private void setUpServer() {
         try {
-            receiveSocket = new DatagramSocket(1234);
+            receiveSocket = new DatagramSocket(3031);
             sendSocket = new DatagramSocket();
             buffer = new byte[1024];
             rcvPacket = new DatagramPacket(buffer, buffer.length);

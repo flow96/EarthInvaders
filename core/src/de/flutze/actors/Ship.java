@@ -1,6 +1,7 @@
 package de.flutze.actors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
@@ -11,10 +12,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.flutze.controls.InputManager;
 import de.flutze.utils.Const;
 import de.flutze.utils.OffsetGenerator;
 
-public class PlayerShip extends Actor {
+public class Ship extends Actor {
 
     private TextureRegion ship;
     private Vector2 velocity;
@@ -24,8 +26,10 @@ public class PlayerShip extends Actor {
     private ParticleEffect effect;
     private OffsetGenerator offsetGenerator;
 
+    public int maxBullets = 5;
 
-    public PlayerShip(String ship) {
+
+    public Ship(String ship) {
         this.ship = new TextureRegion(new Texture(ship));
 
         effect = new ParticleEffect();
@@ -56,18 +60,20 @@ public class PlayerShip extends Actor {
                 bullets.get(i).act(delta);
 
         }
-
         velocity.scl(.8f);
         effect.update(delta);
     }
 
     public void shoot() {
-        if (weaponCoolDown < System.currentTimeMillis()) {
+        if (maxBullets > bullets.size() && weaponCoolDown < System.currentTimeMillis()) {
             weaponCoolDown = System.currentTimeMillis() + shootDelay;
-            bullets.add(new Bullet(new Vector2(getX() + getOriginX(), getY() + getHeight()), new Vector2(0, 350), "Bullets/Bullet1.png"));
+            bullets.add(new Bullet(new Vector2(getX() + getOriginX(), getY() + getHeight()), new Vector2(0, 380), "Bullets/Bullet1.png"));
         }
     }
 
+    public int getBulletsCount() {
+        return bullets.size();
+    }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
