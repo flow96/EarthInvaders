@@ -1,6 +1,8 @@
 package de.flutze.controller;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 import de.flutze.actors.BackgroundStars;
 import de.flutze.actors.Ship;
@@ -27,6 +29,14 @@ public class ClassicGameController extends GameController{
         else
             backgroundStars = stars;
 
+        final int runCount = 14;
+        player.addAction(Actions.repeat(runCount, new Action() {
+            @Override
+            public boolean act(float delta) {
+                player.setPosition(player.getX(), player.getY() + (player.POS_Y / runCount));
+                return true;
+            }
+        }));
     }
 
     private void handleInput(){
@@ -40,12 +50,14 @@ public class ClassicGameController extends GameController{
 
     @Override
     public void update(float delta) {
-        handleInput();
+        if(!player.hasActions())
+            handleInput();
 
         backgroundStars.update(delta);
         player.act(delta);
         //viewport.getCamera().translate(0, .05f * offsetGenerator.getNext(delta), 0);
         viewport.getCamera().update();
+        hud.update(delta);
     }
 
     @Override

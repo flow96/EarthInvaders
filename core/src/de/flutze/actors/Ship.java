@@ -27,6 +27,7 @@ public class Ship extends Actor {
     private OffsetGenerator offsetGenerator;
 
     public int maxBullets = 5;
+    public final float POS_Y = 70;
 
 
     public Ship(String ship) {
@@ -43,7 +44,7 @@ public class Ship extends Actor {
         effect.getEmitters().first().setPosition(getX(), getY());
         effect.start();
         setSize(26, 26);
-        setPosition(Const.WIDTH / 2f - getOriginX(), 70);
+        setPosition(Const.WIDTH / 2f - getOriginX(), 0);
     }
 
 
