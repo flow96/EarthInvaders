@@ -29,13 +29,15 @@ public class ClassicGameHud {
 
     private int[] fps = new int[12];
     private int fpsCounter = 0;
-    int avgFps = 0;
+    private int avgFps = 0;
+    private Batch batch;
 
     private Ship player;
     private float bulletBar;
 
     public ClassicGameHud(Batch batch, Ship player){
         this.player = player;
+        this.batch = batch;
         Viewport viewport = new FitViewport(Const.WIDTH, Const.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, batch);
         fontTexture = new Texture("Fonts/" + Const.FONT_NAME + ".png");
@@ -57,21 +59,12 @@ public class ClassicGameHud {
         lblScore.setFontScale(.4f);
         lblFPS.setFontScale(.3f);
 
-        lblScore.getStyle().fontColor.a = 0;
-        lblFPS.getStyle().fontColor.a = 0;
-
         table.add(lblScore).expandX().left().padTop(10).padLeft(30);
         table.add(lblFPS).expandX().right().padTop(10).padRight(30);
 
         // table.setDebug(true);
         stage.addActor(table);
 
-        stage.addAction(Actions.repeat(10, Actions.run(new Runnable() {
-            @Override
-            public void run() {
-                lblScore.getStyle().fontColor.a += .1f;
-            }
-        })));
     }
 
     public void update(float delta){

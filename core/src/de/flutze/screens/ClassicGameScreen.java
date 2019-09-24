@@ -18,7 +18,6 @@ import de.flutze.utils.OffsetGenerator;
 public class ClassicGameScreen implements Screen {
 
 
-    private Texture earthTexture;
 
     private ClassicGameController gameController;
     private boolean isPaused;

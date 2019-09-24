@@ -69,12 +69,17 @@ public class MainMenuScreen implements Screen {
         table.center();
         table.setFillParent(true);
         lblStartGame = new Label("START CLASSIC", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
-        lblHighscores = new Label("HIGHSCORES", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.GRAY));
-        lblExit = new Label("EXIT", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.GRAY));
+        lblHighscores = new Label("HIGHSCORES", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
+        lblExit = new Label("EXIT", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
 
         lblStartGame.setFontScale(activeScale);
         lblHighscores.setFontScale(inactiveScale);
         lblExit.setFontScale(inactiveScale);
+
+        lblStartGame.setColor(Color.WHITE);
+        lblHighscores.setColor(Color.GRAY);
+        lblExit.setColor(Color.GRAY);
+
 
         table.add(lblStartGame).expandX().center();
         table.row();
@@ -117,62 +122,58 @@ public class MainMenuScreen implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
             selectedLabel = (selectedLabel - 1) % 3;
-            if(selectedLabel < 0)
+            if (selectedLabel < 0)
                 selectedLabel = 2;
             changed = true;
         }
         if (changed) {
-            System.out.println("" + (lblStartGame.getStyle().equals(lblHighscores.getStyle())));
             switch (selectedLabel) {
                 case 0:
-                    //lblStartGame.setStyle(activeStyle);
-                    lblStartGame.setFontScale(activeScale);
-                    //lblHighscores.setStyle(inactiveStyle);
-                    lblStartGame.getStyle().fontColor.a = 0;
-                    lblHighscores.setFontScale(inactiveScale);
-                    //lblExit.setStyle(inactiveStyle);
-                    lblExit.setFontScale(inactiveScale);
+                    lblStartGame.setColor(Color.WHITE);
+                    lblHighscores.setColor(Color.GRAY);
+                    lblExit.setColor(Color.GRAY);
                     break;
                 case 1:
-//                    lblStartGame.setStyle(inactiveStyle);
-                    lblStartGame.setFontScale(inactiveScale);
-//                    lblHighscores.setStyle(activeStyle);
-                    lblHighscores.setFontScale(activeScale);
-//                    lblExit.setStyle(inactiveStyle);
-                    lblExit.setFontScale(inactiveScale);
+                    lblStartGame.setColor(Color.GRAY);
+                    lblHighscores.setColor(Color.WHITE);
+                    lblExit.setColor(Color.GRAY);
                     break;
                 case 2:
-//                    lblStartGame.setStyle(inactiveStyle);
-                    lblStartGame.setFontScale(inactiveScale);
-//                    lblHighscores.setStyle(inactiveStyle);
-                    lblHighscores.setFontScale(inactiveScale);
-//                    lblExit.setStyle(activeStyle);
-                    lblExit.setFontScale(activeScale);
+                    lblStartGame.setColor(Color.GRAY);
+                    lblHighscores.setColor(Color.GRAY);
+                    lblExit.setColor(Color.WHITE);
                     break;
             }
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
-            inputAllowed = false;
-            stage.addAction(Actions.repeat(19, Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    float speed = 42;
-                    //lblTitle.setPosition(lblTitle.getX(), lblTitle.getY() + speed);
-                    lblTitle.getStyle().fontColor.a -= (10 / 100f);
-                    lblStartGame.setPosition(lblStartGame.getX() + speed, lblStartGame.getY());
-                    lblHighscores.setPosition(lblHighscores.getX() - speed, lblHighscores.getY());
-                    lblExit.setPosition(lblExit.getX(), lblExit.getY() - speed);
-                }
-            })));
+            if (selectedLabel == 0) {
+                inputAllowed = false;
+                stage.addAction(Actions.repeat(19, Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        float speed = 42;
+                        //lblTitle.setPosition(lblTitle.getX(), lblTitle.getY() + speed);
+                        Color color = lblTitle.getColor();
+                        color.a = lblTitle.getColor().a - (.1f);
+                        lblTitle.setColor(color);
+                        lblStartGame.setPosition(lblStartGame.getX() + speed, lblStartGame.getY());
+                        lblHighscores.setPosition(lblHighscores.getX() - speed, lblHighscores.getY());
+                        lblExit.setPosition(lblExit.getX(), lblExit.getY() - speed);
+                    }
+                })));
 
 
-            stage.addAction(Actions.after(Actions.run(new Runnable() {
-                @Override
-                public void run() {
-                    theGame.setScreen(new ClassicGameScreen(batch, backgroundStars));
-                }
-            })));
+                stage.addAction(Actions.after(Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        theGame.setScreen(new ClassicGameScreen(batch, backgroundStars));
+                        // TODO: Show Highscore board
+                    }
+                })));
+            } else if (selectedLabel == 2) {
+                Gdx.app.exit();
+            }
         }
     }
 

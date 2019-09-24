@@ -10,6 +10,7 @@ public class DesktopLauncher {
 		config.title = "Earth Invaders";
 		config.width = 896;
 		config.height = 504;
+		config.fullscreen = false;
 		new LwjglApplication(new TheGame(), config);
 	}
 }

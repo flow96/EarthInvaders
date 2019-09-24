@@ -11,6 +11,7 @@ public class TheGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
+		// Gdx.input.setCursorCatched(true);
 		setScreen(new MainMenuScreen(this, batch));
 	}
 

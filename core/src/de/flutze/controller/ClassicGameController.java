@@ -1,5 +1,6 @@
 package de.flutze.controller;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import de.flutze.actors.BackgroundStars;
 import de.flutze.actors.Ship;
 import de.flutze.hud.ClassicGameHud;
+import de.flutze.utils.Const;
 import de.flutze.utils.OffsetGenerator;
 
 public class ClassicGameController extends GameController{
@@ -15,12 +17,14 @@ public class ClassicGameController extends GameController{
     private OffsetGenerator offsetGenerator;
     private ClassicGameHud hud;
     private Batch batch;
+    private Texture earthTexture;
 
 
     public ClassicGameController(Batch batch, BackgroundStars stars){
         super();
         this.batch = batch;
         player = new Ship("Ships/Ship1.png");
+        earthTexture = new Texture("Earth/Earth1.png");
         hud = new ClassicGameHud(batch, player);
 
         offsetGenerator = new OffsetGenerator(2);
@@ -55,7 +59,7 @@ public class ClassicGameController extends GameController{
 
         backgroundStars.update(delta);
         player.act(delta);
-        //viewport.getCamera().translate(0, .05f * offsetGenerator.getNext(delta), 0);
+        viewport.getCamera().translate(0, .05f * offsetGenerator.getNext(delta), 0);
         viewport.getCamera().update();
         hud.update(delta);
     }

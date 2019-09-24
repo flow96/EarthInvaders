@@ -26,7 +26,7 @@ public class Ship extends Actor {
     private ParticleEffect effect;
     private OffsetGenerator offsetGenerator;
 
-    public int maxBullets = 5;
+    public int maxBullets = 2;
     public final float POS_Y = 70;
 
 
@@ -68,7 +68,7 @@ public class Ship extends Actor {
     public void shoot() {
         if (maxBullets > bullets.size() && weaponCoolDown < System.currentTimeMillis()) {
             weaponCoolDown = System.currentTimeMillis() + shootDelay;
-            bullets.add(new Bullet(new Vector2(getX() + getOriginX(), getY() + getHeight()), new Vector2(0, 380), "Bullets/Bullet1.png"));
+            bullets.add(new Bullet(new Vector2(getX() + getOriginX(), getY() + getHeight()), new Vector2(0, 400), "Bullets/Bullet1.png"));
         }
     }
 
