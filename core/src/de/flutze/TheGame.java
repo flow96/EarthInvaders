@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.flutze.screens.MainMenuScreen;
+import de.flutze.sounds.MusicManager;
 
 public class TheGame extends Game {
 	SpriteBatch batch;
@@ -25,5 +26,6 @@ public class TheGame extends Game {
 		super.dispose();
 		if(batch != null)
 			batch.dispose();
+		MusicManager.getInstance().dispose();
 	}
 }

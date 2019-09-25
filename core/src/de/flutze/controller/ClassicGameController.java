@@ -24,6 +24,7 @@ public class ClassicGameController extends GameController {
     private ClassicGameHud hud;
     private Batch batch;
     private Texture earthTexture;
+    private WaveController waveController;
 
 
     public ClassicGameController(Batch batch, BackgroundStars stars, Game game) {
@@ -39,6 +40,8 @@ public class ClassicGameController extends GameController {
             backgroundStars = new BackgroundStars();
         else
             backgroundStars = stars;
+
+        waveController = new WaveController(batch);
 
         final int runCount = 14;
         player.addAction(Actions.repeat(runCount, new Action() {
@@ -76,6 +79,7 @@ public class ClassicGameController extends GameController {
             viewport.getCamera().update();
         }
         hud.update(delta);
+        waveController.update(delta);
     }
 
     @Override
@@ -90,6 +94,8 @@ public class ClassicGameController extends GameController {
         player.draw(batch, 1);
         batch.end();
 
+        waveController.draw();
+
         hud.render();
     }
 
@@ -97,6 +103,7 @@ public class ClassicGameController extends GameController {
     public void resize(int width, int height) {
         super.resize(width, height);
         hud.resize(width, height);
+        waveController.resize(width, height);
     }
 
     @Override

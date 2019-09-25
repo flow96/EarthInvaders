@@ -11,7 +11,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -19,8 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import de.flutze.TheGame;
 import de.flutze.actors.BackgroundStars;
+import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
 
 public class MainMenuScreen implements Screen {
@@ -32,10 +31,11 @@ public class MainMenuScreen implements Screen {
     private Label[] labels;
     private int selectedLabel;
     private Label.LabelStyle inactiveStyle, activeStyle;
-    private float activeScale, inactiveScale;
+    private float textScale;
     private BackgroundStars backgroundStars;
     private Batch batch;
     private boolean inputAllowed;
+    private MusicManager musicManager;
 
 
     public MainMenuScreen(Game theGame, Batch batch) {
@@ -47,9 +47,9 @@ public class MainMenuScreen implements Screen {
         this.fontTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         this.inactiveStyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.GRAY);
         this.activeStyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE);
-        this.activeScale = .6f;
-        this.inactiveScale = .6f;
+        this.textScale = .55f;
         this.backgroundStars = new BackgroundStars();
+        this.musicManager = MusicManager.getInstance();
         camera = new OrthographicCamera();
         Viewport viewport = new FitViewport(Const.WIDTH, Const.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, batch);
@@ -61,7 +61,8 @@ public class MainMenuScreen implements Screen {
     private void initGameHud() {
         labels = new Label[5];
         labels[0] = new Label("EARTH INVADERS", activeStyle);
-        labels[0].setFontScale(.8f);
+        labels[0].setFontScale(.85f);
+        labels[0].setColor(Color.WHITE);
 
 
         labels[1] = new Label("START CLASSIC", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
@@ -69,10 +70,10 @@ public class MainMenuScreen implements Screen {
         labels[3] = new Label("CREDITS", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
         labels[4] = new Label("EXIT", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
 
-        labels[1].setFontScale(activeScale);
-        labels[2].setFontScale(inactiveScale);
-        labels[3].setFontScale(inactiveScale);
-        labels[4].setFontScale(inactiveScale);
+        labels[1].setFontScale(textScale);
+        labels[2].setFontScale(textScale);
+        labels[3].setFontScale(textScale);
+        labels[4].setFontScale(textScale);
 
         labels[1].setColor(Color.WHITE);
         labels[2].setColor(Color.GRAY);
@@ -99,6 +100,7 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
+        MusicManager.getInstance().start();
     }
 
     @Override
@@ -133,6 +135,7 @@ public class MainMenuScreen implements Screen {
             changed = true;
         }
         if (changed) {
+            musicManager.uiFeedback.play();
             for (int i = 1; i < labels.length; i++) {
                 labels[i].setColor(Color.GRAY);
             }
@@ -165,7 +168,7 @@ public class MainMenuScreen implements Screen {
                         // TODO: Show Highscore board
                     }
                 })));
-            } else if (selectedLabel == labels.length - 1) {
+            } else if (selectedLabel == labels.length - 2) {
                 Gdx.app.exit();
             }
         }

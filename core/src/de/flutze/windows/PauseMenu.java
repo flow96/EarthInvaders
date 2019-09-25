@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
+import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
 
 public class PauseMenu extends Table {
@@ -48,19 +49,23 @@ public class PauseMenu extends Table {
     }
 
     public void setSelectedLabel(int i) {
-        if(i < 0) {
-            i = 1;
-        }
-        selectedLabel = i % 2;
-        switch (selectedLabel) {
-            case 0:
-                lblExit.setColor(Color.GRAY);
-                lblContinue.setColor(Color.WHITE);
-                break;
-            case 1:
-                lblExit.setColor(Color.WHITE);
-                lblContinue.setColor(Color.GRAY);
-                break;
+        if(selectedLabel != i) {
+            MusicManager.getInstance().uiFeedback.play();
+            if (i < 0) {
+                i = 1;
+            }
+
+            selectedLabel = i % 2;
+            switch (selectedLabel) {
+                case 0:
+                    lblExit.setColor(Color.GRAY);
+                    lblContinue.setColor(Color.WHITE);
+                    break;
+                case 1:
+                    lblExit.setColor(Color.WHITE);
+                    lblContinue.setColor(Color.GRAY);
+                    break;
+            }
         }
     }
 

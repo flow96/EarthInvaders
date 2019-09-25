@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.flutze.controls.InputManager;
+import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
 import de.flutze.utils.OffsetGenerator;
 
@@ -29,13 +30,15 @@ public class Ship extends Actor {
     private OffsetGenerator offsetGenerator;
 
     public int maxBullets = 2;
-    public final float POS_Y = 70;
+    public final float POS_Y = 65;
     private int lives;
+    private MusicManager musicManager;
 
 
     public Ship(String ship) {
         this.ship = new TextureRegion(new Texture(ship));
 
+        musicManager = MusicManager.getInstance();
         effect = new ParticleEffect();
         velocity = new Vector2();
         bullets = new ArrayList<Bullet>();
@@ -72,6 +75,7 @@ public class Ship extends Actor {
 
     public void shoot() {
         if (maxBullets > bullets.size() && weaponCoolDown < System.currentTimeMillis()) {
+            musicManager.shoot1.play();
             weaponCoolDown = System.currentTimeMillis() + shootDelay;
             bullets.add(new Bullet(new Vector2(getX() + getOriginX(), getY() + getHeight()), new Vector2(0, 400), "Bullets/Bullet1.png"));
         }
