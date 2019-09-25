@@ -1,5 +1,6 @@
 package de.flutze.controller;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,8 +28,13 @@ public abstract class GameController {
     protected Viewport viewport;
     protected InputManager inputManager;
 
+    // General
+    protected boolean paused;
+    protected Game game;
 
-    GameController(){
+
+    public GameController(Game game){
+        this.game = game;
         camera = new OrthographicCamera();
         viewport = new FitViewport(Const.WIDTH, Const.HEIGHT, camera);
         isMultiplayerGame = false;
@@ -47,4 +53,19 @@ public abstract class GameController {
         viewport.update(width, height, true);
     }
 
+    public void dispose(){
+        player.dispose();
+    }
+
+    public boolean isPaused() {
+        return paused;
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public void exitGame(){
+
+    }
 }

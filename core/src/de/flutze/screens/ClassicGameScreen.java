@@ -1,5 +1,6 @@
 package de.flutze.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
@@ -20,16 +21,11 @@ public class ClassicGameScreen implements Screen {
 
 
     private ClassicGameController gameController;
-    private boolean isPaused;
 
 
-    public ClassicGameScreen(Batch batch){
-        this(batch, null);
-    }
 
-    public ClassicGameScreen(Batch batch, BackgroundStars backgroundStars){
-        gameController = new ClassicGameController(batch, backgroundStars);
-        isPaused = false;
+    public ClassicGameScreen(Batch batch, BackgroundStars backgroundStars, Game game){
+        gameController = new ClassicGameController(batch, backgroundStars, game);
     }
 
 
@@ -54,17 +50,17 @@ public class ClassicGameScreen implements Screen {
 
     @Override
     public void pause() {
-        isPaused = true;
+        gameController.setPaused(true);
     }
 
     @Override
     public void resume() {
-        isPaused = false;
+
     }
 
     @Override
     public void hide() {
-
+        gameController.setPaused(true);
     }
 
     @Override

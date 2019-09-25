@@ -2,9 +2,11 @@ package de.flutze.actors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -28,6 +30,7 @@ public class Ship extends Actor {
 
     public int maxBullets = 2;
     public final float POS_Y = 70;
+    private int lives;
 
 
     public Ship(String ship) {
@@ -38,6 +41,7 @@ public class Ship extends Actor {
         bullets = new ArrayList<Bullet>();
         shootDelay = 100;
         weaponCoolDown = 0;
+        lives = 3;
         offsetGenerator = new OffsetGenerator(15);
 
         effect.load(Gdx.files.internal("Particles/ShipParticle4.p"), Gdx.files.internal("Particles"));
@@ -51,10 +55,11 @@ public class Ship extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
-        setPosition(getX() + velocity.x * delta, getY() + velocity.y * delta + .15f * offsetGenerator.getNext(delta));
+        setPosition(getX() + velocity.x * delta, getY() + velocity.y * delta + .17f * offsetGenerator.getNext(delta));
 
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets.get(i).getY() > Const.HEIGHT + 10) {
+                bullets.get(i).dispose();
                 bullets.remove(i);
                 i--;
             } else
@@ -113,4 +118,16 @@ public class Ship extends Actor {
         }
     }
 
+    public void dispose(){
+        ship.getTexture().dispose();
+        effect.dispose();
+    }
+
+    public int getLives() {
+        return lives;
+    }
+
+    public TextureRegion getShip() {
+        return ship;
+    }
 }

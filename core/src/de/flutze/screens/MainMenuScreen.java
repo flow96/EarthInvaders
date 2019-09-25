@@ -1,5 +1,6 @@
 package de.flutze.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
@@ -27,8 +28,8 @@ public class MainMenuScreen implements Screen {
     private Texture fontTexture;
     private OrthographicCamera camera;
     private Stage stage;
-    private TheGame theGame;
-    private Label lblStartGame, lblHighscores, lblExit, lblTitle;
+    private Game theGame;
+    private Label[] labels;
     private int selectedLabel;
     private Label.LabelStyle inactiveStyle, activeStyle;
     private float activeScale, inactiveScale;
@@ -37,7 +38,7 @@ public class MainMenuScreen implements Screen {
     private boolean inputAllowed;
 
 
-    public MainMenuScreen(TheGame theGame, Batch batch) {
+    public MainMenuScreen(Game theGame, Batch batch) {
         this.theGame = theGame;
         this.batch = batch;
         this.selectedLabel = 0;
@@ -58,34 +59,39 @@ public class MainMenuScreen implements Screen {
 
 
     private void initGameHud() {
+        labels = new Label[5];
+        labels[0] = new Label("EARTH INVADERS", activeStyle);
+        labels[0].setFontScale(.8f);
 
-        lblTitle = new Label("EARTH INVADERS", activeStyle);
-        lblTitle.setFontScale(.8f);
+
+        labels[1] = new Label("START CLASSIC", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
+        labels[2] = new Label("HIGHSCORES", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
+        labels[3] = new Label("CREDITS", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
+        labels[4] = new Label("EXIT", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
+
+        labels[1].setFontScale(activeScale);
+        labels[2].setFontScale(inactiveScale);
+        labels[3].setFontScale(inactiveScale);
+        labels[4].setFontScale(inactiveScale);
+
+        labels[1].setColor(Color.WHITE);
+        labels[2].setColor(Color.GRAY);
+        labels[3].setColor(Color.GRAY);
+        labels[4].setColor(Color.GRAY);
 
         Table table = new Table();
         table.top();
-        table.top().add(lblTitle).expandX().padBottom(95).padTop(10);
+        table.top().add(labels[0]).expandX().padBottom(95).padTop(10);
         table.row();
         table.center();
         table.setFillParent(true);
-        lblStartGame = new Label("START CLASSIC", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
-        lblHighscores = new Label("HIGHSCORES", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
-        lblExit = new Label("EXIT", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
-
-        lblStartGame.setFontScale(activeScale);
-        lblHighscores.setFontScale(inactiveScale);
-        lblExit.setFontScale(inactiveScale);
-
-        lblStartGame.setColor(Color.WHITE);
-        lblHighscores.setColor(Color.GRAY);
-        lblExit.setColor(Color.GRAY);
-
-
-        table.add(lblStartGame).expandX().center();
+        table.add(labels[1]).expandX().center();
         table.row();
-        table.add(lblHighscores).expandX().center().padTop(10);
+        table.add(labels[2]).expandX().center().padTop(10);
         table.row();
-        table.add(lblExit).expandX().center().padTop(10);
+        table.add(labels[3]).expandX().center().padTop(10);
+        table.row();
+        table.add(labels[4]).expandX().center().padTop(10);
 
         // table.setDebug(true);
         stage.addActor(table);
@@ -117,33 +123,20 @@ public class MainMenuScreen implements Screen {
     private void handleInput() {
         boolean changed = false;
         if (Gdx.input.isKeyJustPressed(Input.Keys.DOWN) || Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            selectedLabel = (selectedLabel + 1) % 3;
+            selectedLabel = (selectedLabel + 1) % (labels.length - 1);
             changed = true;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.UP) || Gdx.input.isKeyJustPressed(Input.Keys.W)) {
-            selectedLabel = (selectedLabel - 1) % 3;
+            selectedLabel = (selectedLabel - 1) % labels.length;
             if (selectedLabel < 0)
-                selectedLabel = 2;
+                selectedLabel = labels.length - 2;
             changed = true;
         }
         if (changed) {
-            switch (selectedLabel) {
-                case 0:
-                    lblStartGame.setColor(Color.WHITE);
-                    lblHighscores.setColor(Color.GRAY);
-                    lblExit.setColor(Color.GRAY);
-                    break;
-                case 1:
-                    lblStartGame.setColor(Color.GRAY);
-                    lblHighscores.setColor(Color.WHITE);
-                    lblExit.setColor(Color.GRAY);
-                    break;
-                case 2:
-                    lblStartGame.setColor(Color.GRAY);
-                    lblHighscores.setColor(Color.GRAY);
-                    lblExit.setColor(Color.WHITE);
-                    break;
+            for (int i = 1; i < labels.length; i++) {
+                labels[i].setColor(Color.GRAY);
             }
+            labels[selectedLabel+1].setColor(Color.WHITE);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
@@ -154,12 +147,13 @@ public class MainMenuScreen implements Screen {
                     public void run() {
                         float speed = 42;
                         //lblTitle.setPosition(lblTitle.getX(), lblTitle.getY() + speed);
-                        Color color = lblTitle.getColor();
-                        color.a = lblTitle.getColor().a - (.1f);
-                        lblTitle.setColor(color);
-                        lblStartGame.setPosition(lblStartGame.getX() + speed, lblStartGame.getY());
-                        lblHighscores.setPosition(lblHighscores.getX() - speed, lblHighscores.getY());
-                        lblExit.setPosition(lblExit.getX(), lblExit.getY() - speed);
+                        Color color = labels[0].getColor();
+                        color.a = labels[0].getColor().a - (.1f);
+                        labels[0].setColor(color);
+                        labels[1].setPosition(labels[1].getX() + speed, labels[1].getY());
+                        labels[2].setPosition(labels[2].getX() - speed, labels[2].getY());
+                        labels[3].setPosition(labels[3].getX() + speed, labels[3].getY());
+                        labels[4].setPosition(labels[4].getX() - speed, labels[4].getY());
                     }
                 })));
 
@@ -167,11 +161,11 @@ public class MainMenuScreen implements Screen {
                 stage.addAction(Actions.after(Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        theGame.setScreen(new ClassicGameScreen(batch, backgroundStars));
+                        theGame.setScreen(new ClassicGameScreen(batch, backgroundStars, theGame));
                         // TODO: Show Highscore board
                     }
                 })));
-            } else if (selectedLabel == 2) {
+            } else if (selectedLabel == labels.length - 1) {
                 Gdx.app.exit();
             }
         }
@@ -196,5 +190,6 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
+        fontTexture.dispose();
     }
 }
