@@ -77,9 +77,9 @@ public class ClassicGameController extends GameController {
             player.act(delta);
             //viewport.getCamera().translate(0, .05f * offsetGenerator.getNext(delta), 0);
             viewport.getCamera().update();
+            waveController.update(delta);
         }
         hud.update(delta);
-        waveController.update(delta);
     }
 
     @Override
@@ -116,11 +116,12 @@ public class ClassicGameController extends GameController {
     public void setPaused(boolean paused) {
         super.setPaused(paused);
         if (paused) {
-            batch.setColor(255, 255, 255, .35f);
+            batch.setColor(255, 255, 255, .3f);
         } else {
             batch.setColor(255, 255, 255, 1);
         }
         hud.setPaused(paused);
+        waveController.setPaused(paused);
     }
 
     @Override

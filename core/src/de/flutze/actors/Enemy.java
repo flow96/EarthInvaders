@@ -16,7 +16,7 @@ public class Enemy extends Actor {
         setPosition(position.x, position.y);
         this.velocity = velocity;
         this.texture = new TextureRegion(new Texture("Ships/" + enemyType));
-        setSize(26, 26);
+        setSize(23, 23);
     }
 
     public void act(float delta){
