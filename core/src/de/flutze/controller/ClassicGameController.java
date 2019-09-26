@@ -13,6 +13,7 @@ import de.flutze.actors.BackgroundStars;
 import de.flutze.actors.Ship;
 import de.flutze.hud.ClassicGameHud;
 import de.flutze.screens.MainMenuScreen;
+import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
 import de.flutze.utils.OffsetGenerator;
 import de.flutze.windows.PauseMenu;
@@ -25,11 +26,15 @@ public class ClassicGameController extends GameController {
     private Batch batch;
     private Texture earthTexture;
     private WaveController waveController;
+    private boolean inputAllowed;
+    private boolean gameOver;
 
 
     public ClassicGameController(Batch batch, BackgroundStars stars, Game game) {
         super(game);
         this.batch = batch;
+        this.inputAllowed = false;
+        this.gameOver = false;
         this.batch.setColor(255, 255, 255, 1);
         player = new Ship("Ships/Ship1.png");
         earthTexture = new Texture("Earth/Earth1.png");
@@ -41,16 +46,21 @@ public class ClassicGameController extends GameController {
         else
             backgroundStars = stars;
 
-        waveController = new WaveController(batch);
+        waveController = new WaveController(batch, this);
 
-        final int runCount = 14;
-        player.addAction(Actions.repeat(runCount, new Action() {
+        final int runCount = 15;
+        player.addAction(Actions.delay(.1f, Actions.sequence(Actions.repeat(runCount, new Action() {
             @Override
             public boolean act(float delta) {
                 player.setPosition(player.getX(), player.getY() + (player.POS_Y / runCount));
                 return true;
             }
-        }));
+        }), Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                inputAllowed = true;
+            }
+        }))));
     }
 
     private void handleInput() {
@@ -65,7 +75,7 @@ public class ClassicGameController extends GameController {
 
     @Override
     public void update(float delta) {
-        if (!player.hasActions() && !paused)
+        if (inputAllowed && !paused)
             handleInput();
 
         if (!paused) {
@@ -75,9 +85,26 @@ public class ClassicGameController extends GameController {
             }
             backgroundStars.update(delta);
             player.act(delta);
+            for (int i = 0; i < otherPlayers.size(); i++) {
+                otherPlayers.get(i).act(delta);
+            }
             //viewport.getCamera().translate(0, .05f * offsetGenerator.getNext(delta), 0);
             viewport.getCamera().update();
             waveController.update(delta);
+
+            // Handle collisions
+            for (int i = 0; i < player.getBullets().size(); i++) {
+                for (int j = 0; j < waveController.getEnemies().size(); j++) {
+                    if(player.getBullets().get(i).getRectangle().overlaps(waveController.getEnemies().get(j).getRectangle())){
+                        musicManager.destroyed.play(musicManager.SOUND_VOLUME);
+                        player.getBullets().remove(i);
+                        waveController.getEnemies().remove(j);
+                        i--;
+                        j--;
+                        break;
+                    }
+                }
+            }
         }
         hud.update(delta);
     }
@@ -90,8 +117,11 @@ public class ClassicGameController extends GameController {
         // Start drawing
         batch.begin();
         backgroundStars.render(batch);
-        //batch.draw(earthTexture, -200, -8, Const.WIDTH + 350, 300);
+        batch.draw(earthTexture, -200, -8, Const.WIDTH + 350, 300);
         player.draw(batch, 1);
+        for (int i = 0; i < otherPlayers.size(); i++) {
+            otherPlayers.get(i).act(delta);
+        }
         batch.end();
 
         waveController.draw();
@@ -129,5 +159,12 @@ public class ClassicGameController extends GameController {
         super.exitGame();
         // Reset batch colors
         game.setScreen(new MainMenuScreen(game, batch));
+    }
+
+    @Override
+    public void gameOver(){
+        gameOver = true;
+        game.setScreen(new MainMenuScreen(game, batch));
+        // Todo: notify multiplayer
     }
 }

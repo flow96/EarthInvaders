@@ -50,7 +50,7 @@ public class PauseMenu extends Table {
 
     public void setSelectedLabel(int i) {
         if(selectedLabel != i) {
-            MusicManager.getInstance().uiFeedback.play();
+            MusicManager.getInstance().uiFeedback.play(MusicManager.SOUND_VOLUME);
             if (i < 0) {
                 i = 1;
             }

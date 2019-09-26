@@ -135,7 +135,7 @@ public class MainMenuScreen implements Screen {
             changed = true;
         }
         if (changed) {
-            musicManager.uiFeedback.play();
+            musicManager.uiFeedback.play(musicManager.SOUND_VOLUME);
             for (int i = 1; i < labels.length; i++) {
                 labels[i].setColor(Color.GRAY);
             }
@@ -143,6 +143,7 @@ public class MainMenuScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
+            musicManager.uiFeedback.play(musicManager.SOUND_VOLUME);
             if (selectedLabel == 0) {
                 inputAllowed = false;
                 stage.addAction(Actions.repeat(19, Actions.run(new Runnable() {

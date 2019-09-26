@@ -12,6 +12,7 @@ import de.flutze.actors.Ship;
 import de.flutze.controls.InputManager;
 import de.flutze.network.Client;
 import de.flutze.network.Server;
+import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
 
 public abstract class GameController {
@@ -31,6 +32,7 @@ public abstract class GameController {
     // General
     protected boolean paused;
     protected Game game;
+    protected MusicManager musicManager;
 
 
     public GameController(Game game){
@@ -40,6 +42,7 @@ public abstract class GameController {
         isMultiplayerGame = false;
         otherPlayers = new ArrayList<Ship>();
         inputManager = InputManager.getInstance();
+        musicManager = MusicManager.getInstance();
     }
 
 
@@ -68,4 +71,6 @@ public abstract class GameController {
     public void exitGame(){
 
     }
+
+    public void gameOver(){}
 }

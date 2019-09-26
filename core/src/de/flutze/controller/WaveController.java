@@ -28,7 +28,7 @@ public class WaveController {
 
     private int currentWave;
     private float speed;
-    private Enemy[][] enemies;
+    private List<Enemy> enemies;
     private Batch batch;
     private Texture fontTexture;
 
@@ -38,13 +38,18 @@ public class WaveController {
     private int timeOut = 1500;
     private int initLastX, initLastY;
     private boolean initWaveDone;
+    private boolean gameOver;
+    private boolean changedLastTick;
+    private GameController gameController;
 
 
-    public WaveController(Batch batch) {
+    public WaveController(Batch batch, GameController gameController) {
         this.batch = batch;
+        this.gameController = gameController;
+        gameOver = false;
+        changedLastTick = false;
         currentWave = 1;
-        speed = 20;
-        enemies = new Enemy[5][15];
+        enemies = new ArrayList<Enemy>();
         fontTexture = new Texture("Fonts/" + Const.FONT_NAME + ".png");
         fontTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
@@ -56,16 +61,17 @@ public class WaveController {
     }
 
     private void initWave(float delay) {
-        enemies = new Enemy[5][16];
+        enemies = new ArrayList<Enemy>();
         initWaveDone = false;
+        speed = 20 + currentWave * 2;
         initLastX = 0;
         initLastY = 0;
         stage.addAction(Actions.delay(delay, Actions.repeat(40, new Action() {
             @Override
             public boolean act(float delta) {
-                enemies[initLastY][initLastX] = new Enemy(new Vector2(initLastX * (23 + 10) + 20, initLastY * (23 + 5) + 400), Vector2.Zero, "Ship1.png");
+                enemies.add(new Enemy(new Vector2(initLastX * (23 + 10) + 20, initLastY * (23 + 5) + 400), Vector2.Zero, "Ship1.png"));
                 initLastX++;
-                enemies[initLastY][initLastX] = new Enemy(new Vector2(initLastX * (23 + 10) + 20, initLastY * (23 + 5) + 400), Vector2.Zero, "Ship1.png");
+                enemies.add(new Enemy(new Vector2(initLastX * (23 + 10) + 20, initLastY * (23 + 5) + 400), Vector2.Zero, "Ship1.png"));
                 initLastX++;
                 if (initLastX % 16 == 0) {
                     initLastX = 0;
@@ -120,33 +126,43 @@ public class WaveController {
 
     public void update(float delta) {
         stage.act(delta);
-        if (initWaveDone) {
+        if (initWaveDone && !gameOver) {
             boolean changeDirection = false;
             boolean waveFinished = true;
-            for (int i = 0; i < enemies.length; i++) {
-                for (int j = 0; j < enemies[i].length; j++) {
-                    if (enemies[i][j] != null) {
-                        waveFinished = false;
-                        enemies[i][j].setPosition(enemies[i][j].getX() + speed * delta, enemies[i][j].getY());
-                        if (enemies[i][j].getX() >= Const.WIDTH - 20 - enemies[i][j].getWidth() || enemies[i][j].getX() <= 20) {
-                            changeDirection = true;
-                        }
+            for (int i = 0; i < enemies.size(); i++) {
+                if (enemies.get(i) != null) {
+                    waveFinished = false;
+                    enemies.get(i).setPosition(enemies.get(i).getX() + speed * delta, enemies.get(i).getY());
+                    if (enemies.get(i).getX() >= Const.WIDTH - 20 - enemies.get(i).getWidth() || enemies.get(i).getX() <= 20) {
+                        changeDirection = true;
                     }
                 }
             }
-            if (changeDirection) {
-                if (Math.abs(speed) < 600)
-                    speed *= -4.4f;
+            if (changeDirection && !changedLastTick) {
+                changedLastTick = true;
+                if (Math.abs(speed) < 500)
+                    speed *= -1.4f;
                 else
                     speed *= -1;
-                for (int i = 0; i < enemies.length; i++) {
-                    for (int j = 0; j < enemies[i].length; j++) {
-                        if (enemies[i][j] != null) {
-                            enemies[i][j].setPosition(enemies[i][j].getX(), enemies[i][j].getY() - 11);
+                for (int i = 0; i < enemies.size(); i++) {
+                    if (enemies.get(i) != null) {
+                        enemies.get(i).setPosition(enemies.get(i).getX(), enemies.get(i).getY() - 20);
+                        if(enemies.get(i).getY() <= 85){
+                            gameOver = true;
+                            lblWave.setText("GAME OVER");
+                            showLabel(.2f);
+                            hideLabel(3f);
+                            stage.addAction(Actions.delay(4f ,Actions.run(new Runnable() {
+                                @Override
+                                public void run() {
+                                    gameController.gameOver();
+                                }
+                            })));
                         }
                     }
                 }
-            }
+            }else
+                changedLastTick = false;
             if (waveFinished) {
                 currentWave++;
                 showLabel(.5f);
@@ -159,11 +175,9 @@ public class WaveController {
     public void draw() {
         final Color color = stage.getBatch().getColor().cpy();
         stage.getBatch().begin();
-        for (int i = 0; i < enemies.length; i++) {
-            for (int j = 0; j < enemies[i].length; j++) {
-                if (enemies[i][j] != null)
-                    enemies[i][j].draw(batch);
-            }
+        for (int i = 0; i < enemies.size(); i++) {
+            if (enemies.get(i) != null)
+                enemies.get(i).draw(batch);
         }
 
         stage.getBatch().end();
@@ -173,7 +187,6 @@ public class WaveController {
     }
 
     private void showLabel(float delay) {
-        lblWave.setText("WAVE " + currentWave);
         table.addAction(Actions.delay(delay, Actions.fadeIn(.8f)));
 
     }
@@ -188,5 +201,9 @@ public class WaveController {
         } else if (!b && table.getColor().a != 0) {
             table.setVisible(true);
         }
+    }
+
+    public List<Enemy> getEnemies() {
+        return enemies;
     }
 }

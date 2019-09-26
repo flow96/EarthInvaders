@@ -1,6 +1,7 @@
 package de.flutze;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import de.flutze.screens.MainMenuScreen;
@@ -12,7 +13,7 @@ public class TheGame extends Game {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		// Gdx.input.setCursorCatched(true);
+		Gdx.input.setCursorCatched(true);
 		setScreen(new MainMenuScreen(this, batch));
 	}
 

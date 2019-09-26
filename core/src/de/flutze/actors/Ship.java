@@ -29,7 +29,7 @@ public class Ship extends Actor {
     private ParticleEffect effect;
     private OffsetGenerator offsetGenerator;
 
-    public int maxBullets = 2;
+    public int maxBullets = 1;
     public final float POS_Y = 65;
     private int lives;
     private MusicManager musicManager;
@@ -75,7 +75,7 @@ public class Ship extends Actor {
 
     public void shoot() {
         if (maxBullets > bullets.size() && weaponCoolDown < System.currentTimeMillis()) {
-            musicManager.shoot1.play();
+            musicManager.shoot1.play(musicManager.SOUND_VOLUME);
             weaponCoolDown = System.currentTimeMillis() + shootDelay;
             bullets.add(new Bullet(new Vector2(getX() + getOriginX(), getY() + getHeight()), new Vector2(0, 400), "Bullets/Bullet1.png"));
         }
@@ -133,5 +133,9 @@ public class Ship extends Actor {
 
     public TextureRegion getShip() {
         return ship;
+    }
+
+    public List<Bullet> getBullets() {
+        return bullets;
     }
 }
