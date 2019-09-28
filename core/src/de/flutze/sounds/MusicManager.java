@@ -7,7 +7,6 @@ import com.badlogic.gdx.audio.Sound;
 public class MusicManager {
     /*
     Credits (Chiptronicle): https://patrickdearteaga.com.
-
      */
 
     public final Music music1, music2, music3;

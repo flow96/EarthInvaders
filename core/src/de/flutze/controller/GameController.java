@@ -33,6 +33,7 @@ public abstract class GameController {
     protected boolean paused;
     protected Game game;
     protected MusicManager musicManager;
+    protected int score;
 
 
     public GameController(Game game){
@@ -72,5 +73,21 @@ public abstract class GameController {
 
     }
 
+    public Ship getPlayer() {
+        return player;
+    }
+
+    public List<Ship> getOtherPlayers() {
+        return otherPlayers;
+    }
+
     public void gameOver(){}
+
+    public int getScore(){
+        return score;
+    }
+
+    public void increaseScore(int points){
+        score += points;
+    }
 }

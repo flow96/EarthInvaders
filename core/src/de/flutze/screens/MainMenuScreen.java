@@ -24,7 +24,7 @@ import de.flutze.utils.Const;
 
 public class MainMenuScreen implements Screen {
 
-    private Texture fontTexture;
+    private Texture fontTexture, earth;
     private OrthographicCamera camera;
     private Stage stage;
     private Game theGame;
@@ -44,6 +44,7 @@ public class MainMenuScreen implements Screen {
         this.selectedLabel = 0;
         this.inputAllowed = true;
         this.fontTexture = new Texture("Fonts/" + Const.FONT_NAME + ".png");
+        this.earth = new Texture("Earth/Earth1.png");
         this.fontTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         this.inactiveStyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.GRAY);
         this.activeStyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE);
@@ -116,6 +117,7 @@ public class MainMenuScreen implements Screen {
 
         batch.begin();
         backgroundStars.render(batch);
+        batch.draw(earth, -200, -8, Const.WIDTH + 350, 300);
         batch.end();
 
         stage.getViewport().apply();

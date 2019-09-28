@@ -22,7 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.flutze.actors.Enemy;
+import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
+import de.flutze.utils.OffsetGenerator;
 
 public class WaveController {
 
@@ -41,11 +43,13 @@ public class WaveController {
     private boolean gameOver;
     private boolean changedLastTick;
     private GameController gameController;
+    private MusicManager musicManager;
 
 
     public WaveController(Batch batch, GameController gameController) {
         this.batch = batch;
         this.gameController = gameController;
+        this.musicManager = MusicManager.getInstance();
         gameOver = false;
         changedLastTick = false;
         currentWave = 1;
@@ -69,9 +73,15 @@ public class WaveController {
         stage.addAction(Actions.delay(delay, Actions.repeat(40, new Action() {
             @Override
             public boolean act(float delta) {
-                enemies.add(new Enemy(new Vector2(initLastX * (23 + 10) + 20, initLastY * (23 + 5) + 400), Vector2.Zero, "Ship1.png"));
+                Enemy.EnemyType type = Enemy.EnemyType.SHIP1;
+                if (initLastY > 1 && initLastY < 4)
+                    type = Enemy.EnemyType.SHIP2;
+                if (initLastY > 4)
+                    type = Enemy.EnemyType.SHIP3;
+
+                enemies.add(new Enemy(new Vector2(initLastX * (Enemy.WIDTH + 12) + 20, initLastY * (Enemy.HEIGHT + 6) + 400), Vector2.Zero, type));
                 initLastX++;
-                enemies.add(new Enemy(new Vector2(initLastX * (23 + 10) + 20, initLastY * (23 + 5) + 400), Vector2.Zero, "Ship1.png"));
+                enemies.add(new Enemy(new Vector2(initLastX * (Enemy.WIDTH + 12) + 20, initLastY * (Enemy.HEIGHT + 6) + 400), Vector2.Zero, type));
                 initLastX++;
                 if (initLastX % 16 == 0) {
                     initLastX = 0;
@@ -133,26 +143,39 @@ public class WaveController {
                 if (enemies.get(i) != null) {
                     waveFinished = false;
                     enemies.get(i).setPosition(enemies.get(i).getX() + speed * delta, enemies.get(i).getY());
+                    enemies.get(i).act(delta);
                     if (enemies.get(i).getX() >= Const.WIDTH - 20 - enemies.get(i).getWidth() || enemies.get(i).getX() <= 20) {
                         changeDirection = true;
+                    }
+                    // Handle collisions
+                    for (int j = 0; j < gameController.getPlayer().getBullets().size(); j++) {
+
+                        if (gameController.getPlayer().getBullets().get(j).getRectangle().overlaps(enemies.get(i).getRectangle())) {
+                            musicManager.destroyed.play(musicManager.SOUND_VOLUME);
+                            gameController.getPlayer().getBullets().remove(j);
+                            gameController.increaseScore(enemies.get(i).enemyType.points);
+                            enemies.remove(i);
+                            i--;
+                            break;
+                        }
                     }
                 }
             }
             if (changeDirection && !changedLastTick) {
                 changedLastTick = true;
                 if (Math.abs(speed) < 500)
-                    speed *= -1.4f;
+                    speed *= -1.33f;
                 else
                     speed *= -1;
                 for (int i = 0; i < enemies.size(); i++) {
                     if (enemies.get(i) != null) {
-                        enemies.get(i).setPosition(enemies.get(i).getX(), enemies.get(i).getY() - 20);
-                        if(enemies.get(i).getY() <= 85){
+                        enemies.get(i).setPosition(enemies.get(i).getX(), enemies.get(i).getY() - 24);
+                        if (enemies.get(i).getY() <= 85) {
                             gameOver = true;
                             lblWave.setText("GAME OVER");
                             showLabel(.2f);
                             hideLabel(3f);
-                            stage.addAction(Actions.delay(4f ,Actions.run(new Runnable() {
+                            stage.addAction(Actions.delay(4f, Actions.run(new Runnable() {
                                 @Override
                                 public void run() {
                                     gameController.gameOver();
@@ -161,10 +184,11 @@ public class WaveController {
                         }
                     }
                 }
-            }else
+            } else
                 changedLastTick = false;
             if (waveFinished) {
                 currentWave++;
+                lblWave.setText("WAVE " + currentWave);
                 showLabel(.5f);
                 hideLabel(3.5f);
                 initWave(3.3f);
@@ -205,5 +229,9 @@ public class WaveController {
 
     public List<Enemy> getEnemies() {
         return enemies;
+    }
+
+    public void createExplosion(Vector2 pos){
+
     }
 }

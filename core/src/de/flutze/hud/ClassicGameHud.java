@@ -26,7 +26,6 @@ import de.flutze.windows.PauseMenu;
 public class ClassicGameHud extends Hud {
 
     private Texture healthBarInner, healthBarOuter;
-    private int score;
     private Label lblScore;
     private Label lblFPS;
     private PauseMenu pauseMenu;
@@ -37,13 +36,13 @@ public class ClassicGameHud extends Hud {
 
     private Ship player;
     private float bulletBar;
-    private InputManager inputManager;
+    private int lastScore;
 
     public ClassicGameHud(Batch batch, Ship player, GameController controller) {
         super(controller);
         this.player = player;
         this.pauseMenu = new PauseMenu();
-        this.inputManager = InputManager.getInstance();
+        this.lastScore = 0;
         Viewport viewport = new FitViewport(Const.WIDTH, Const.HEIGHT, new OrthographicCamera());
         stage = new Stage(viewport, batch);
         fontTexture = new Texture("Fonts/" + Const.FONT_NAME + ".png");
@@ -59,7 +58,7 @@ public class ClassicGameHud extends Hud {
         Table table = new Table();
         table.top();
         table.setFillParent(true);
-        lblScore = new Label("SCORE: " + score, new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
+        lblScore = new Label("" + controller.getScore(), new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
         lblFPS = new Label("", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
 
         lblScore.setFontScale(.4f);
@@ -104,6 +103,25 @@ public class ClassicGameHud extends Hud {
         }
         // calcFPS(delta);
         stage.act(delta);
+        if(controller.getScore() != lastScore) {
+            lastScore = controller.getScore();
+            stage.addAction(Actions.repeat(3, new Action() {
+                @Override
+                public boolean act(float delta) {
+                    lblScore.setFontScale(lblScore.getFontScaleX() + 0.05f);
+                    return true;
+                }
+            }));
+            stage.addAction(Actions.after(Actions.repeat(3, new Action() {
+                @Override
+                public boolean act(float delta) {
+                    lblScore.setFontScale(lblScore.getFontScaleX() - 0.05f);
+                    return true;
+                }
+            })));
+
+            lblScore.setText("" + lastScore);
+        }
 
         bulletBar = (float) (healthBarOuter.getWidth() - 4) / player.maxBullets * (player.maxBullets - player.getBulletsCount());
     }

@@ -92,19 +92,6 @@ public class ClassicGameController extends GameController {
             viewport.getCamera().update();
             waveController.update(delta);
 
-            // Handle collisions
-            for (int i = 0; i < player.getBullets().size(); i++) {
-                for (int j = 0; j < waveController.getEnemies().size(); j++) {
-                    if(player.getBullets().get(i).getRectangle().overlaps(waveController.getEnemies().get(j).getRectangle())){
-                        musicManager.destroyed.play(musicManager.SOUND_VOLUME);
-                        player.getBullets().remove(i);
-                        waveController.getEnemies().remove(j);
-                        i--;
-                        j--;
-                        break;
-                    }
-                }
-            }
         }
         hud.update(delta);
     }

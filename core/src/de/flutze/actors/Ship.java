@@ -29,7 +29,7 @@ public class Ship extends Actor {
     private ParticleEffect effect;
     private OffsetGenerator offsetGenerator;
 
-    public int maxBullets = 1;
+    public int maxBullets = 10;
     public final float POS_Y = 65;
     private int lives;
     private MusicManager musicManager;
