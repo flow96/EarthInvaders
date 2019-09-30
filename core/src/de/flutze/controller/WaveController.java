@@ -24,7 +24,6 @@ import java.util.List;
 import de.flutze.actors.Enemy;
 import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
-import de.flutze.utils.OffsetGenerator;
 
 public class WaveController {
 
