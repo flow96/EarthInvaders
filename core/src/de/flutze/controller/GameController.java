@@ -90,4 +90,8 @@ public abstract class GameController {
     public void increaseScore(int points){
         score += points;
     }
+
+    public void destroyShip(Ship ship){
+
+    }
 }

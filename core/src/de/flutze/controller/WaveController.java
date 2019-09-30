@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Action;
@@ -18,12 +19,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.flutze.actors.BaseActor;
+import de.flutze.actors.Bullet;
 import de.flutze.actors.Enemy;
 import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
+
+import static jdk.nashorn.internal.objects.Global.load;
 
 public class WaveController {
 
@@ -43,6 +49,8 @@ public class WaveController {
     private boolean changedLastTick;
     private GameController gameController;
     private MusicManager musicManager;
+    private List<Bullet> enemyBullets;
+    private List<ParticleEffect> effects;
 
 
     public WaveController(Batch batch, GameController gameController) {
@@ -53,6 +61,8 @@ public class WaveController {
         changedLastTick = false;
         currentWave = 1;
         enemies = new ArrayList<Enemy>();
+        effects = new ArrayList<ParticleEffect>();
+        enemyBullets = new ArrayList<Bullet>();
         fontTexture = new Texture("Fonts/" + Const.FONT_NAME + ".png");
         fontTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
 
@@ -78,9 +88,9 @@ public class WaveController {
                 if (initLastY > 4)
                     type = Enemy.EnemyType.SHIP3;
 
-                enemies.add(new Enemy(new Vector2(initLastX * (Enemy.WIDTH + 12) + 20, initLastY * (Enemy.HEIGHT + 6) + 400), Vector2.Zero, type));
+                enemies.add(new Enemy(new Vector2(initLastX * (Enemy.WIDTH + 12) + 20, initLastY * (Enemy.HEIGHT + 6) + 400), Vector2.Zero, type, currentWave, WaveController.this));
                 initLastX++;
-                enemies.add(new Enemy(new Vector2(initLastX * (Enemy.WIDTH + 12) + 20, initLastY * (Enemy.HEIGHT + 6) + 400), Vector2.Zero, type));
+                enemies.add(new Enemy(new Vector2(initLastX * (Enemy.WIDTH + 12) + 20, initLastY * (Enemy.HEIGHT + 6) + 400), Vector2.Zero, type, currentWave, WaveController.this));
                 initLastX++;
                 if (initLastX % 16 == 0) {
                     initLastX = 0;
@@ -138,6 +148,7 @@ public class WaveController {
         if (initWaveDone && !gameOver) {
             boolean changeDirection = false;
             boolean waveFinished = true;
+            // Update enemies
             for (int i = 0; i < enemies.size(); i++) {
                 if (enemies.get(i) != null) {
                     waveFinished = false;
@@ -148,11 +159,11 @@ public class WaveController {
                     }
                     // Handle collisions
                     for (int j = 0; j < gameController.getPlayer().getBullets().size(); j++) {
-
                         if (gameController.getPlayer().getBullets().get(j).getRectangle().overlaps(enemies.get(i).getRectangle())) {
                             musicManager.destroyed.play(musicManager.SOUND_VOLUME);
                             gameController.getPlayer().getBullets().remove(j);
                             gameController.increaseScore(enemies.get(i).enemyType.points);
+                            createExplosion(new Vector2(enemies.get(i).getX() + enemies.get(i).getOriginX(), enemies.get(i).getY() + enemies.get(i).getOriginY()));
                             enemies.remove(i);
                             i--;
                             break;
@@ -160,6 +171,23 @@ public class WaveController {
                     }
                 }
             }
+            // Update enemy bullets
+            for (int i = 0; i < enemyBullets.size(); i++) {
+                enemyBullets.get(i).act(delta);
+                // Check for player collision
+                if(enemyBullets.get(i).getRectangle().overlaps(gameController.getPlayer().getRectangle())){
+                    createExplosion(gameController.getPlayer().getPosition());
+                    gameController.destroyShip(gameController.getPlayer());
+                    enemyBullets.remove(i);
+                    i--;
+                    continue;
+                }
+                if(enemyBullets.get(i).getPosition().y < -10){
+                    enemyBullets.remove(i);
+                    i--;
+                }
+            }
+            // Change move direction of enemies
             if (changeDirection && !changedLastTick) {
                 changedLastTick = true;
                 if (Math.abs(speed) < 500)
@@ -170,22 +198,14 @@ public class WaveController {
                     if (enemies.get(i) != null) {
                         enemies.get(i).setPosition(enemies.get(i).getX(), enemies.get(i).getY() - 24);
                         if (enemies.get(i).getY() <= 85) {
-                            gameOver = true;
-                            lblWave.setText("GAME OVER");
-                            showLabel(.2f);
-                            hideLabel(3f);
-                            stage.addAction(Actions.delay(4f, Actions.run(new Runnable() {
-                                @Override
-                                public void run() {
-                                    gameController.gameOver();
-                                }
-                            })));
+                            showGameOver();
                         }
                     }
                 }
             } else
                 changedLastTick = false;
             if (waveFinished) {
+                enemyBullets.clear();
                 currentWave++;
                 lblWave.setText("WAVE " + currentWave);
                 showLabel(.5f);
@@ -193,6 +213,29 @@ public class WaveController {
                 initWave(3.3f);
             }
         }
+
+        // Update explosions
+        for (int i = 0; i < effects.size(); i++) {
+            effects.get(i).update(delta);
+            if(effects.get(i).isComplete()){
+                effects.remove(i);
+                i--;
+            }
+        }
+    }
+
+    public void showGameOver(){
+        gameOver = true;
+        speed = (speed / speed) * 5;
+        lblWave.setText("GAME OVER");
+        showLabel(.2f);
+        hideLabel(3f);
+        stage.addAction(Actions.delay(4f, Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                gameController.gameOver();
+            }
+        })));
     }
 
     public void draw() {
@@ -201,6 +244,12 @@ public class WaveController {
         for (int i = 0; i < enemies.size(); i++) {
             if (enemies.get(i) != null)
                 enemies.get(i).draw(batch);
+        }
+        for (int i = 0; i < enemyBullets.size(); i++) {
+            enemyBullets.get(i).draw(batch, 1);
+        }
+        for (int i = 0; i < effects.size(); i++) {
+            effects.get(i).draw(batch);
         }
 
         stage.getBatch().end();
@@ -219,11 +268,7 @@ public class WaveController {
     }
 
     public void setPaused(boolean b) {
-        if (b && table.isVisible()) {
-            table.setVisible(false);
-        } else if (!b && table.getColor().a != 0) {
-            table.setVisible(true);
-        }
+        table.setVisible(!b);
     }
 
     public List<Enemy> getEnemies() {
@@ -231,6 +276,15 @@ public class WaveController {
     }
 
     public void createExplosion(Vector2 pos){
+        ParticleEffect effect = new ParticleEffect();
+        effect.load(Gdx.files.internal("Particles/Explosion.p"), Gdx.files.internal("Particles"));
+        effect.getEmitters().first().setPosition(pos.x, pos.y);
+        effect.start();
+        effects.add(effect);
+        ((ClassicGameController)gameController).shakeCamera();
+    }
 
+    public void spawnEnemyBullet(Vector2 pos){
+        this.enemyBullets.add(new Bullet(pos, new Vector2(0, -300),"Bullets/Bullet1.png"));
     }
 }

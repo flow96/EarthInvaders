@@ -6,10 +6,17 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.flutze.actors.BackgroundStars;
+import de.flutze.actors.Bullet;
 import de.flutze.actors.Ship;
 import de.flutze.hud.ClassicGameHud;
 import de.flutze.screens.MainMenuScreen;
@@ -28,7 +35,8 @@ public class ClassicGameController extends GameController {
     private WaveController waveController;
     private boolean inputAllowed;
     private boolean gameOver;
-
+    private Action cameraShakeAction;
+    private Vector3 camPos;
 
     public ClassicGameController(Batch batch, BackgroundStars stars, Game game) {
         super(game);
@@ -40,7 +48,7 @@ public class ClassicGameController extends GameController {
         earthTexture = new Texture("Earth/Earth1.png");
         hud = new ClassicGameHud(batch, player, this);
 
-        offsetGenerator = new OffsetGenerator(2);
+        offsetGenerator = new OffsetGenerator(20);
         if (stars == null)
             backgroundStars = new BackgroundStars();
         else
@@ -70,7 +78,6 @@ public class ClassicGameController extends GameController {
             player.moveRight();
         if (inputManager.isShooting())
             player.shoot();
-
     }
 
     @Override
@@ -92,6 +99,8 @@ public class ClassicGameController extends GameController {
             viewport.getCamera().update();
             waveController.update(delta);
 
+            if(cameraShakeAction != null)
+                cameraShakeAction.act(delta);
         }
         hud.update(delta);
     }
@@ -145,13 +154,27 @@ public class ClassicGameController extends GameController {
     public void exitGame() {
         super.exitGame();
         // Reset batch colors
-        game.setScreen(new MainMenuScreen(game, batch));
+        game.setScreen(new MainMenuScreen(game, batch, backgroundStars));
     }
 
     @Override
     public void gameOver(){
         gameOver = true;
-        game.setScreen(new MainMenuScreen(game, batch));
+        game.setScreen(new MainMenuScreen(game, batch, backgroundStars));
         // Todo: notify multiplayer
     }
+
+    @Override
+    public void destroyShip(Ship ship) {
+        if(ship == player){
+            if(player.die()){
+                waveController.showGameOver();
+            }
+        }
+    }
+
+    public void shakeCamera(){
+
+    }
+
 }

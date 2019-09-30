@@ -38,7 +38,7 @@ public class MainMenuScreen implements Screen {
     private MusicManager musicManager;
 
 
-    public MainMenuScreen(Game theGame, Batch batch) {
+    public MainMenuScreen(Game theGame, Batch batch, BackgroundStars backgroundStars) {
         this.theGame = theGame;
         this.batch = batch;
         this.selectedLabel = 0;
@@ -49,7 +49,10 @@ public class MainMenuScreen implements Screen {
         this.inactiveStyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.GRAY);
         this.activeStyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE);
         this.textScale = .55f;
-        this.backgroundStars = new BackgroundStars();
+        if(backgroundStars == null)
+            this.backgroundStars = new BackgroundStars();
+        else
+            this.backgroundStars = backgroundStars;
         this.musicManager = MusicManager.getInstance();
         camera = new OrthographicCamera();
         Viewport viewport = new FitViewport(Const.WIDTH, Const.HEIGHT, new OrthographicCamera());
@@ -141,7 +144,7 @@ public class MainMenuScreen implements Screen {
             for (int i = 1; i < labels.length; i++) {
                 labels[i].setColor(Color.GRAY);
             }
-            labels[selectedLabel+1].setColor(Color.WHITE);
+            labels[selectedLabel + 1].setColor(Color.WHITE);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
@@ -171,6 +174,8 @@ public class MainMenuScreen implements Screen {
                         // TODO: Show Highscore board
                     }
                 })));
+            } else if (selectedLabel == 2) {
+                theGame.setScreen(new CreditsScreen(batch, backgroundStars, theGame));
             } else if (selectedLabel == labels.length - 2) {
                 Gdx.app.exit();
             }

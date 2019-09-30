@@ -8,8 +8,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
 import de.flutze.utils.OffsetGenerator;
 
-public class Ship extends Actor {
+public class Ship extends BaseActor {
 
     private TextureRegion ship;
     private Vector2 velocity;
@@ -29,27 +31,29 @@ public class Ship extends Actor {
     private ParticleEffect effect;
     private OffsetGenerator offsetGenerator;
 
-    public int maxBullets = 10;
+    public int maxBullets = 2;
     public final float POS_Y = 65;
     private int lives;
     private MusicManager musicManager;
+    private boolean dead;
 
 
     public Ship(String ship) {
         this.ship = new TextureRegion(new Texture(ship));
-
         musicManager = MusicManager.getInstance();
         effect = new ParticleEffect();
         velocity = new Vector2();
         bullets = new ArrayList<Bullet>();
         shootDelay = 100;
         weaponCoolDown = 0;
+        dead = false;
         lives = 3;
         offsetGenerator = new OffsetGenerator(15);
 
         effect.load(Gdx.files.internal("Particles/ShipParticle4.p"), Gdx.files.internal("Particles"));
         effect.getEmitters().first().setPosition(getX(), getY());
         effect.start();
+        setRectOffset(3);
         setSize(26, 26);
         setPosition(Const.WIDTH / 2f - getOriginX(), 0);
     }
@@ -58,8 +62,11 @@ public class Ship extends Actor {
     @Override
     public void act(float delta) {
         super.act(delta);
-        setPosition(getX() + velocity.x * delta, getY() + velocity.y * delta + .17f * offsetGenerator.getNext(delta));
-
+        if(!dead) {
+            setPosition(getX() + velocity.x * delta, getY() + velocity.y * delta + .17f * offsetGenerator.getNext(delta));
+            velocity.scl(.8f);
+        }
+        effect.update(delta);
         for (int i = 0; i < bullets.size(); i++) {
             if (bullets.get(i).getY() > Const.HEIGHT + 10) {
                 bullets.get(i).dispose();
@@ -67,10 +74,7 @@ public class Ship extends Actor {
                 i--;
             } else
                 bullets.get(i).act(delta);
-
         }
-        velocity.scl(.8f);
-        effect.update(delta);
     }
 
     public void shoot() {
@@ -87,18 +91,15 @@ public class Ship extends Actor {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
-        effect.draw(batch);
-        batch.draw(ship, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+        if(!dead) {
+            effect.draw(batch);
+            batch.draw(ship, getX(), getY(), getOriginX(), getOriginY(), getWidth(), getHeight(), getScaleX(), getScaleY(), getRotation());
+        }
         for (int i = 0; i < bullets.size(); i++) {
             bullets.get(i).draw(batch, parentAlpha);
         }
     }
 
-    @Override
-    public void setSize(float width, float height) {
-        super.setSize(width, height);
-        setOrigin(width / 2, height / 2);
-    }
 
     @Override
     public void setPosition(float x, float y) {
@@ -137,5 +138,30 @@ public class Ship extends Actor {
 
     public List<Bullet> getBullets() {
         return bullets;
+    }
+
+    public boolean die(){
+        if(!dead) {
+            dead = true;
+            if (lives > 0) {
+                lives--;
+                respawn(1);
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+    private void respawn(float delay){
+        addAction(Actions.delay(delay, Actions.run(new Runnable() {
+            @Override
+            public void run() {
+                setPosition(Const.WIDTH / 2f - getOriginX(), POS_Y);
+                effect.reset();
+                bullets.clear();
+                velocity.setZero();
+                dead = false;
+            }
+        })));
     }
 }
