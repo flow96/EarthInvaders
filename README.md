@@ -19,3 +19,8 @@ Ship controls: `A` and `D` or `left` and `right` arrow keys<br />
 Shooting: `Space`
 
 # Preview
+<img src="./Screenshots/menu.png" alt="Menu" width="650"/>
+<br />
+<img src="./Screenshots/wave1.png" alt="Menu" width="650"/>
+<br />
+<img src="./Screenshots/play.png" alt="Menu" width="650"/>
