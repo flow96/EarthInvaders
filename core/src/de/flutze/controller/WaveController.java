@@ -150,9 +150,11 @@ public class WaveController {
             boolean changeDirection = false;
             boolean waveFinished = true;
             // Update enemies
+            float speedY = Math.abs(Const.WIDTH / 24f / speed);
             for (int i = 0; i < enemies.size(); i++) {
                 if (enemies.get(i) != null) {
                     waveFinished = false;
+                    enemies.get(i).setPosition(enemies.get(i).getX() + speed * delta, enemies.get(i).getY());
                     enemies.get(i).act(delta);
                     if (enemies.get(i).getX() >= Const.WIDTH - 20 - enemies.get(i).getWidth() || enemies.get(i).getX() <= 20) {
                         changeDirection = true;
