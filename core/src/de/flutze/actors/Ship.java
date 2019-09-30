@@ -31,7 +31,7 @@ public class Ship extends BaseActor {
     private ParticleEffect effect;
     private OffsetGenerator offsetGenerator;
 
-    public int maxBullets = 200;
+    public int maxBullets = 2;
     public final float POS_Y = 65;
     private int lives;
     private MusicManager musicManager;
