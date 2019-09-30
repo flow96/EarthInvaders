@@ -43,7 +43,7 @@ allprojects {
 }
 
 project(":desktop") {
-    apply plugin: "java"
+    apply plugin: "java-library"
 
 
     dependencies {
@@ -54,7 +54,7 @@ project(":desktop") {
         implementation "com.badlogicgames.gdx:gdx-controllers-desktop:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers-platform:$gdxVersion:natives-desktop"
         implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
-        
+
     }
 }
 
@@ -80,12 +80,12 @@ project(":android") {
         implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-        
+
     }
 }
 
 project(":ios") {
-    apply plugin: "java"
+    apply plugin: "java-library"
     apply plugin: "robovm"
 
 
@@ -96,20 +96,20 @@ project(":ios") {
         implementation "com.badlogicgames.gdx:gdx-backend-robovm:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"
         implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-ios"
-        
+
     }
 }
 
 project(":core") {
-    apply plugin: "java"
+    apply plugin: "java-library"
 
 
     dependencies {
-        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         implementation "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        
+
     }
 }
 

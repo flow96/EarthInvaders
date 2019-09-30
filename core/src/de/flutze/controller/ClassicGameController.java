@@ -22,6 +22,7 @@ import de.flutze.hud.ClassicGameHud;
 import de.flutze.screens.MainMenuScreen;
 import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
+import de.flutze.utils.HighscoreManager;
 import de.flutze.utils.OffsetGenerator;
 import de.flutze.windows.PauseMenu;
 
@@ -82,10 +83,10 @@ public class ClassicGameController extends GameController {
 
     @Override
     public void update(float delta) {
-        if (inputAllowed && !paused)
-            handleInput();
+        if (!paused && !gameOver) {
+            if(inputAllowed)
+                handleInput();
 
-        if (!paused) {
             if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
                 setPaused(true);
                 return;
@@ -160,8 +161,8 @@ public class ClassicGameController extends GameController {
     @Override
     public void gameOver(){
         gameOver = true;
+        HighscoreManager.getInstance().isTopTenScore(score);
         game.setScreen(new MainMenuScreen(game, batch, backgroundStars));
-        // Todo: notify multiplayer
     }
 
     @Override

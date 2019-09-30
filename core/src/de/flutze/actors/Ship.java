@@ -31,7 +31,7 @@ public class Ship extends BaseActor {
     private ParticleEffect effect;
     private OffsetGenerator offsetGenerator;
 
-    public int maxBullets = 2;
+    public int maxBullets = 200;
     public final float POS_Y = 65;
     private int lives;
     private MusicManager musicManager;
@@ -78,7 +78,7 @@ public class Ship extends BaseActor {
     }
 
     public void shoot() {
-        if (maxBullets > bullets.size() && weaponCoolDown < System.currentTimeMillis()) {
+        if (!dead && maxBullets > bullets.size() && weaponCoolDown < System.currentTimeMillis()) {
             musicManager.shoot1.play(musicManager.SOUND_VOLUME);
             weaponCoolDown = System.currentTimeMillis() + shootDelay;
             bullets.add(new Bullet(new Vector2(getX() + getOriginX(), getY() + getHeight()), new Vector2(0, 400), "Bullets/Bullet1.png"));
@@ -112,13 +112,13 @@ public class Ship extends BaseActor {
     }
 
     public void moveRight() {
-        if (getX() + getWidth() < Const.WIDTH) {
+        if (!dead && getX() + getWidth() < Const.WIDTH) {
             velocity.add(80, 0);
         }
     }
 
     public void moveLeft() {
-        if (getX() > 0) {
+        if (!dead && getX() > 0) {
             velocity.add(-80, 0);
         }
     }
@@ -143,6 +143,7 @@ public class Ship extends BaseActor {
     public boolean die(){
         if(!dead) {
             dead = true;
+            musicManager.die.play(musicManager.SOUND_VOLUME);
             if (lives > 0) {
                 lives--;
                 respawn(1);

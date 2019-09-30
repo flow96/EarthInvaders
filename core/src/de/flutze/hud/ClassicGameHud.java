@@ -58,7 +58,7 @@ public class ClassicGameHud extends Hud {
         Table table = new Table();
         table.top();
         table.setFillParent(true);
-        lblScore = new Label("" + controller.getScore(), new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
+        lblScore = new Label("" + String.format("%05d", controller.getScore()), new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
         lblFPS = new Label("", new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE));
 
         lblScore.setFontScale(.4f);
@@ -120,7 +120,7 @@ public class ClassicGameHud extends Hud {
                 }
             })));
 
-            lblScore.setText("" + lastScore);
+            lblScore.setText(String.format("%05d", lastScore));
         }
 
         bulletBar = (float) (healthBarOuter.getWidth() - 4) / player.maxBullets * (player.maxBullets - player.getBulletsCount());

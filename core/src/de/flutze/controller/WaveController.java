@@ -28,6 +28,7 @@ import de.flutze.actors.Bullet;
 import de.flutze.actors.Enemy;
 import de.flutze.sounds.MusicManager;
 import de.flutze.utils.Const;
+import de.flutze.utils.HighscoreManager;
 
 import static jdk.nashorn.internal.objects.Global.load;
 
@@ -149,10 +150,11 @@ public class WaveController {
             boolean changeDirection = false;
             boolean waveFinished = true;
             // Update enemies
+            float speedY = Math.abs(Const.WIDTH / 24f / speed);
             for (int i = 0; i < enemies.size(); i++) {
                 if (enemies.get(i) != null) {
                     waveFinished = false;
-                    enemies.get(i).setPosition(enemies.get(i).getX() + speed * delta, enemies.get(i).getY());
+                    enemies.get(i).setPosition(enemies.get(i).getX() + speed * delta, enemies.get(i).getY() - speedY * delta);
                     enemies.get(i).act(delta);
                     if (enemies.get(i).getX() >= Const.WIDTH - 20 - enemies.get(i).getWidth() || enemies.get(i).getX() <= 20) {
                         changeDirection = true;
@@ -196,7 +198,7 @@ public class WaveController {
                     speed *= -1;
                 for (int i = 0; i < enemies.size(); i++) {
                     if (enemies.get(i) != null) {
-                        enemies.get(i).setPosition(enemies.get(i).getX(), enemies.get(i).getY() - 24);
+                       // enemies.get(i).setPosition(enemies.get(i).getX(), enemies.get(i).getY() - 24);
                         if (enemies.get(i).getY() <= 85) {
                             showGameOver();
                         }
@@ -227,10 +229,16 @@ public class WaveController {
     public void showGameOver(){
         gameOver = true;
         speed = (speed / speed) * 5;
-        lblWave.setText("GAME OVER");
+        if(HighscoreManager.getInstance().isNewHighscore(gameController.getScore())){
+            lblWave.setText("NEW HIGHSCORE: " + gameController.getScore());
+
+        }else{
+            lblWave.setText("GAME OVER");
+        }
         showLabel(.2f);
-        hideLabel(3f);
-        stage.addAction(Actions.delay(4f, Actions.run(new Runnable() {
+        hideLabel(3.2f);
+
+        stage.addAction(Actions.delay(3.4f, Actions.run(new Runnable() {
             @Override
             public void run() {
                 gameController.gameOver();

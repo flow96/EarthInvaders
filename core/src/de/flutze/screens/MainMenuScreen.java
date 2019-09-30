@@ -27,7 +27,7 @@ public class MainMenuScreen implements Screen {
     private Texture fontTexture, earth;
     private OrthographicCamera camera;
     private Stage stage;
-    private Game theGame;
+    private Game game;
     private Label[] labels;
     private int selectedLabel;
     private Label.LabelStyle inactiveStyle, activeStyle;
@@ -38,8 +38,8 @@ public class MainMenuScreen implements Screen {
     private MusicManager musicManager;
 
 
-    public MainMenuScreen(Game theGame, Batch batch, BackgroundStars backgroundStars) {
-        this.theGame = theGame;
+    public MainMenuScreen(Game game, Batch batch, BackgroundStars backgroundStars) {
+        this.game = game;
         this.batch = batch;
         this.selectedLabel = 0;
         this.inputAllowed = true;
@@ -49,7 +49,7 @@ public class MainMenuScreen implements Screen {
         this.inactiveStyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.GRAY);
         this.activeStyle = new Label.LabelStyle(new BitmapFont(Gdx.files.internal("Fonts/" + Const.FONT_NAME + ".fnt"), new TextureRegion(fontTexture)), Color.WHITE);
         this.textScale = .55f;
-        if(backgroundStars == null)
+        if (backgroundStars == null)
             this.backgroundStars = new BackgroundStars();
         else
             this.backgroundStars = backgroundStars;
@@ -170,13 +170,15 @@ public class MainMenuScreen implements Screen {
                 stage.addAction(Actions.after(Actions.run(new Runnable() {
                     @Override
                     public void run() {
-                        theGame.setScreen(new ClassicGameScreen(batch, backgroundStars, theGame));
+                        game.setScreen(new ClassicGameScreen(batch, backgroundStars, game));
                         // TODO: Show Highscore board
                     }
                 })));
+            } else if (selectedLabel == 1) {
+                game.setScreen(new HighscoreScreen(batch, backgroundStars, game));
             } else if (selectedLabel == 2) {
-                theGame.setScreen(new CreditsScreen(batch, backgroundStars, theGame));
-            } else if (selectedLabel == labels.length - 2) {
+                game.setScreen(new CreditsScreen(batch, backgroundStars, game));
+            } else if (selectedLabel == 3) {
                 Gdx.app.exit();
             }
         }
