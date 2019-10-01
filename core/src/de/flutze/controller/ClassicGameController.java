@@ -161,7 +161,6 @@ public class ClassicGameController extends GameController {
     @Override
     public void gameOver(){
         gameOver = true;
-        HighscoreManager.getInstance().isTopTenScore(score);
         game.setScreen(new MainMenuScreen(game, batch, backgroundStars));
     }
 
