@@ -5,7 +5,7 @@ Earth Invaders - a Space Invaders clone for the it-talents challenge.
 The game is developed in Java using the open-source LibGDX framework in combination with Android Studio.
 The Project can be cloned or downloaded and then opened in Android Studio.
 <br />
-clone project by running `git clone https://github.com/flow96/EarthInvaders.git` in a terminal.
+Clone project by running `git clone https://github.com/flow96/EarthInvaders.git` in a terminal.
 
 # Running the game
 I provided runnables for Windows/Mac and a raw .jar file (jre 1.8 will be needed).
